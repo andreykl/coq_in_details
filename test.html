@@ -18,7 +18,7 @@
 
 <body class="jscoq-main">
   <div id="ide-wrapper" class="toggled" data-filename="DependentPatternMatching.v">
-    <div class="code">
+    <textarea class="snippet">
 Module DestructuringLet.
   Inductive prod (A B : Type) : Type :=
     pair (a : A) (b : B).
@@ -355,7 +355,7 @@ Module BinaryWord2.
     end.
 
 End BinaryWord2.
-</div>
+</textarea>
   </div>
 
   <script type="module">
@@ -384,12 +384,12 @@ End BinaryWord2.
     if (sp.has('code')) set_filename('');
     else if (last_filename) set_filename(last_filename);
 
-    JsCoq.start(jscoq_opts).then(res => {
+    JsCoq.start(['.snippet'], jscoq_opts).then(res => {
       coq = res;
-      if (sp.has('project'))     coq.openProject(sp.get('project'));
-      if (sp.has('share'))       coq.openCollab({hastebin: sp.get('share')});
-      if (sp.has('p2p'))         coq.openCollab({p2p: sp.get('p2p')});
-      if (sp.has('code'))        coq.provider.load(sp.get('code'), sp.get('fn') || 'playground');
+      //if (sp.has('project'))     coq.openProject(sp.get('project'));
+      //if (sp.has('share'))       coq.openCollab({hastebin: sp.get('share')});
+      //if (sp.has('p2p'))         coq.openCollab({p2p: sp.get('p2p')});
+      //if (sp.has('code'))        coq.provider.load(sp.get('code'), sp.get('fn') || 'playground');
     });
 
     window.addEventListener('beforeunload', () => {
