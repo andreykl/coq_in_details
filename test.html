@@ -17,11 +17,14 @@
   </head>
 
   <body class="jscoq-main">
-    <p>
+    <div id="ide-wrapper" class="toggled" data-filename="DependentPatternMatching.v">
+      <div id="code-wrapper">
+  <div id="document-wrapper">
+    <div id="document" class="jscoqdoc">
+          <p>
       Use <span class="has-kbd"><kbd>Alt</kbd>+<kbd>↓</kbd>/<kbd>↑</kbd></span> to step through the proof,
       and observe the proof state on the right panel.
     </p>
-  <div id="ide-wrapper" class="toggled" data-filename="DependentPatternMatching.v">
     <textarea class="snippet">
 Module DestructuringLet.
   Inductive prod (A B : Type) : Type :=
@@ -359,8 +362,11 @@ Module BinaryWord2.
     end.
 
 End BinaryWord2.
-</textarea>
+    </textarea>
+    </div>
   </div>
+      </div>
+    </div>
 
   <script type="module">
     import { JsCoq } from "./assets/js/node_modules/jscoq/dist/frontend/index.js";
