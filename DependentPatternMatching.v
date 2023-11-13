@@ -145,74 +145,6 @@ Module BinaryWordV1.
        False_rect _ (discriminate_bwn_SO_n bw I e)
     end eq_refl.
 
-  Lemma binary_word_or_lemma : forall n (w1 w2 : binary_word n), binary_word n.
-  Proof.
-    fix F 2.
-    intros n w1 w2.
-    destruct w1 as [b1|n1 b1 pw1].
-    { remember 1 as x eqn:Ex.
-      remember w2 as w2' eqn:Ew2.
-      destruct w2 as [b2|n2 b2 pw2].
-      - apply (bw1 (b1 || b2)).
-      - (* impossible case. we could just use `apply w2'` to solve the goal *)
-        (* so, what we have below is just for fun *)
-        injection Ex as Ex.
-        subst n2.
-        inversion pw2.
-    }
-    { remember (S n1) as x eqn:Ex.
-      destruct w2 as [b2|n2 b2 pw2].
-      - (* impossible case, so we just supply an appropriate value *)
-        apply (bw1 true).
-      - (* here we have 2 different types for terms pw1 and pw2 *)
-        injection Ex as Ex.
-        rewrite Ex in *.
-        apply (bwn (b1 || b2) (F _ pw1 pw2)).
-    }
-  Qed.
-    
-  Lemma discriminate_bwn_SO_n' {n b pw} (w : binary_word (S n))
-    : w = bwn b pw -> 1 = S n -> False.
-  Proof.
-    intros; destruct pw; discriminate.
-  Qed.
-
-  Fixpoint binary_word_or' {n} (w1 w2 : binary_word n) : binary_word n :=
-    match
-      w1 in binary_word n1', w2 in binary_word n2'
-      return n2' = n1' -> binary_word n1'
-    with
-    | bw1 b1, bw1 b2 => fun _ => bw1 (b1 || b2)
-    | bwn b1 pw1, bwn b2 pw2 => fun e =>
-       bwn (b1 || b2) (binary_word_or' pw1 (let 'eq_refl := e in pw2))
-    | bw1 _, bwn _ _ as bw => fun e =>
-       False_rect _ (discriminate_bwn_SO_n' bw eq_refl (eq_sym e))
-    | bwn _ _ as bw, bw1 _ => fun e =>
-       False_rect _ (discriminate_bwn_SO_n' bw eq_refl e)
-    end eq_refl.
-
-    Fixpoint binary_word_or1 {n} (w1 w2 : binary_word n) : binary_word n :=
-    match
-      w1 in binary_word n1'
-      return binary_word n1' -> n1' = n -> binary_word n1'
-    with
-    | bw1 b1 => fun w2 e0 =>
-      match w2 in binary_word n2' return n = n2' -> binary_word n2' with
-      | bw1 b2 => fun _ => bw1 (b1 || b2)
-      | bwn b2 pw2 as bw => fun e1 =>
-        False_rect _ (discriminate_bwn_SO_n bw I (eq_trans e0 e1))
-      end (let 'eq_refl := e0 in eq_refl)
-    | @bwn n1 b1 pw1 as bw => fun w2 e0 =>
-       match w2 in binary_word n2' return n2' = n -> binary_word n2' with
-       | bw1 b1 => fun e1 =>
-         False_rect _ (discriminate_bwn_SO_n bw I (eq_trans e1 (eq_sym e0)))
-       | @bwn n2 b2 pw2 as bw => fun e1 =>
-         let e' : S n2 = S n1 := eq_trans e1 (eq_sym e0) in
-         let 'eq_refl := eq_sym e' in
-         bwn (b1 || b2) (binary_word_or pw1 (let 'eq_refl := e' in pw2))
-       end (let 'eq_refl := e0 in eq_refl)
-    end w2 eq_refl.
-
   Fixpoint binary_word_or2 {n} (w1 w2 : binary_word n) : binary_word n :=
     match
       w1 in binary_word n1'
@@ -334,3 +266,75 @@ Module BinaryWord2.
     end.
 
 End BinaryWord2.
+
+Module AdditionsAndSolutions.
+  Import BinaryWordV1.
+  
+  Lemma binary_word_or_lemma : forall n (w1 w2 : binary_word n), binary_word n.
+  Proof.
+    fix F 2.
+    intros n w1 w2.
+    destruct w1 as [b1|n1 b1 pw1].
+    { remember 1 as x eqn:Ex.
+      remember w2 as w2' eqn:Ew2.
+      destruct w2 as [b2|n2 b2 pw2].
+      - apply (bw1 (b1 || b2)).
+      - (* impossible case. we could just use `apply w2'` to solve the goal *)
+        (* so, what we have below is just for fun *)
+        injection Ex as Ex.
+        subst n2.
+        inversion pw2.
+    }
+    { remember (S n1) as x eqn:Ex.
+      destruct w2 as [b2|n2 b2 pw2].
+      - (* impossible case, so we just supply an appropriate value *)
+        apply (bw1 true).
+      - (* here we have 2 different types for terms pw1 and pw2 *)
+        injection Ex as Ex.
+        rewrite Ex in *.
+        apply (bwn (b1 || b2) (F _ pw1 pw2)).
+    }
+  Qed.
+    
+  Lemma discriminate_bwn_SO_n' {n b pw} (w : binary_word (S n))
+    : w = bwn b pw -> 1 = S n -> False.
+  Proof.
+    intros; destruct pw; discriminate.
+  Qed.
+
+  Fixpoint binary_word_or' {n} (w1 w2 : binary_word n) : binary_word n :=
+    match
+      w1 in binary_word n1', w2 in binary_word n2'
+      return n2' = n1' -> binary_word n1'
+    with
+    | bw1 b1, bw1 b2 => fun _ => bw1 (b1 || b2)
+    | bwn b1 pw1, bwn b2 pw2 => fun e =>
+       bwn (b1 || b2) (binary_word_or' pw1 (let 'eq_refl := e in pw2))
+    | bw1 _, bwn _ _ as bw => fun e =>
+       False_rect _ (discriminate_bwn_SO_n' bw eq_refl (eq_sym e))
+    | bwn _ _ as bw, bw1 _ => fun e =>
+       False_rect _ (discriminate_bwn_SO_n' bw eq_refl e)
+    end eq_refl.
+
+  Fixpoint binary_word_or1 {n} (w1 w2 : binary_word n) : binary_word n :=
+    match
+      w1 in binary_word n1'
+      return binary_word n1' -> n1' = n -> binary_word n1'
+    with
+    | bw1 b1 => fun w2 e0 =>
+      match w2 in binary_word n2' return n = n2' -> binary_word n2' with
+      | bw1 b2 => fun _ => bw1 (b1 || b2)
+      | bwn b2 pw2 as bw => fun e1 =>
+        False_rect _ (discriminate_bwn_SO_n bw I (eq_trans e0 e1))
+      end (let 'eq_refl := e0 in eq_refl)
+    | @bwn n1 b1 pw1 as bw => fun w2 e0 =>
+       match w2 in binary_word n2' return n2' = n -> binary_word n2' with
+       | bw1 b1 => fun e1 =>
+         False_rect _ (discriminate_bwn_SO_n bw I (eq_trans e1 (eq_sym e0)))
+       | @bwn n2 b2 pw2 as bw => fun e1 =>
+         let e' : S n2 = S n1 := eq_trans e1 (eq_sym e0) in
+         let 'eq_refl := eq_sym e' in
+         bwn (b1 || b2) (binary_word_or pw1 (let 'eq_refl := e' in pw2))
+       end (let 'eq_refl := e0 in eq_refl)
+    end w2 eq_refl.
+End AdditionsAndSolutions.
